@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema de Inventario de Ropa</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
   <style>
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
@@ -60,7 +62,7 @@
       box-sizing: border-box;
       background-color: #f9fbfc;
       transition: border-color 0.3s;
-      height: 60px; /* Aumentado para mayor tamaño */
+      height: 60px;
     }
     select:focus {
       border-color: #3498db;
@@ -80,8 +82,8 @@
       line-height: 100px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       transition: all 0.3s ease;
-      white-space: normal; /* Permite que el texto se ajuste */
-      padding: 5px; /* Espacio interno para texto */
+      white-space: normal;
+      padding: 5px;
     }
     .option-btn.selected {
       border-color: #34495e;
@@ -166,7 +168,7 @@
       input, select {
         font-size: 16px;
         padding: 10px;
-        height: 50px; /* Ajuste para móviles */
+        height: 50px;
       }
       .option-btn {
         font-size: 16px;
@@ -394,46 +396,32 @@
         return;
       }
 
-      const latexContent = `
-\\documentclass[a4paper,12pt]{article}
-\\usepackage[utf8]{inputenc}
-\\usepackage{geometry}
-\\geometry{margin=1in}
-\\usepackage{booktabs}
-\\usepackage{longtable}
-\\usepackage{emoji}
-\\usepackage{pdflscape}
-\\title{Informe de Inventario de Ropa}
-\\author{}
-\\date{${new Date().toLocaleDateString('es-ES')}}
-\\begin{document}
-\\maketitle
-\\begin{landscape}
-\\section*{Inventario de Ropa}
-\\begin{longtable}{p{3cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{3cm}|p{2cm}}
-\\toprule
-\\textbf{Nombre} & \\textbf{Cantidad} & \\textbf{Color} & \\textbf{Talle} & \\textbf{Tela} & \\textbf{Temporada} & \\textbf{Tipo} \\\\
-\\midrule
-\\endhead
-${inventario.map(p => {
-  const temporadaIcono = p.temporada === 'Verano' ? '\\emoji{sun}' : p.temporada === 'Invierno' ? '\\emoji{snowflake}' : '\\emoji{calendar}';
-  const tipoIcono = p.tipo === 'Hombre' ? '\\emoji{man}' : p.tipo === 'Mujer' ? '\\emoji{woman}' : '\\emoji{child}';
-  return `${p.nombre.replace(/&/g, '\\&')} & ${p.cantidad} & ${p.color} & ${p.talle} & ${p.tela} & ${temporadaIcono} ${p.temporada} & ${tipoIcono} ${p.tipo} \\\\`;
-}).join('\n')}
-\\bottomrule
-\\end{longtable}
-\\end{landscape}
-\\end{document}
-      `.trim();
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
 
-      const blob = new Blob([latexContent], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'inventario.tex';
-      a.click();
-      URL.revokeObjectURL(url);
-      alert('Se ha descargado el archivo inventario.tex. Compílalo con un editor LaTeX (como Overleaf) para generar el PDF.');
+      doc.setFontSize(18);
+      doc.text('Inventario de Ropa', 10, 20);
+
+      const tableData = inventario.map(producto => [
+        producto.nombre,
+        producto.cantidad,
+        producto.color,
+        producto.talle,
+        producto.tela,
+        `${producto.temporada === 'Verano' ? '☀️' : producto.temporada === 'Invierno' ? '❄️' : '📅'} ${producto.temporada}`,
+        `${producto.tipo === 'Hombre' ? '👨' : producto.tipo === 'Mujer' ? '👩' : '🧒'} ${producto.tipo}`
+      ]);
+
+      doc.autoTable({
+        head: [['Nombre', 'Cantidad', 'Color', 'Talle', 'Tela', 'Temporada', 'Tipo']],
+        body: tableData,
+        startY: 30,
+        theme: 'striped',
+        styles: { fontSize: 12, cellPadding: 5 },
+        headStyles: { fillColor: [52, 152, 219], textColor: [255, 255, 255], fontSize: 14 }
+      });
+
+      doc.save('inventario.pdf');
     }
 
     // Cargar la tabla al iniciar
