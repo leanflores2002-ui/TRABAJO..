@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Inventario de Ropa</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #e6f0fa;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    .container {
+      max-width: 100%;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #34495e;
+      font-weight: 600;
+      font-size: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+      border: 2px solid #bdc3c7;
+      border-radius: 8px;
+      box-sizing: border-box;
+      background-color: #f9fbfc;
+      transition: border-color 0.3s;
+    }
+    input:focus {
+      border-color: #3498db;
+      outline: none;
+    }
+    select {
+      width: 100%;
+      padding: 18px;
+      font-size: 20px;
+      border: 2px solid #bdc3c7;
+      border-radius: 8px;
+      box-sizing: border-box;
+      background-color: #f9fbfc;
+      transition: border-color 0.3s;
+      height: 60px; /* Aumentado para mayor tamaño */
+    }
+    select:focus {
+      border-color: #3498db;
+      outline: none;
+    }
+    .option-btn {
+      display: inline-block;
+      width: 100px;
+      height: 100px;
+      margin: 5px;
+      border: 2px solid transparent;
+      border-radius: 10px;
+      font-size: 18px;
+      cursor: pointer;
+      text-align: center;
+      vertical-align: middle;
+      line-height: 100px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      white-space: normal; /* Permite que el texto se ajuste */
+      padding: 5px; /* Espacio interno para texto */
+    }
+    .option-btn.selected {
+      border-color: #34495e;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+    .option-btn.blue { background-color: #3498db; color: white; }
+    .option-btn.red { background-color: #e74c3c; color: white; }
+    .option-btn.yellow { background-color: #f1c40f; color: #333; }
+    .option-btn.green { background-color: #2ecc71; color: white; }
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 20px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    button.export {
+      background-color: #2ecc71;
+    }
+    button.export:hover {
+      background-color: #27ae60;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 16px;
+    }
+    th, td {
+      border: 1px solid #dfe6e9;
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #3498db;
+      color: white;
+      font-size: 18px;
+    }
+    td {
+      background-color: #f9fbfc;
+    }
+    .actions button {
+      width: auto;
+      padding: 8px 16px;
+      font-size: 16px;
+      margin-right: 10px;
+    }
+    .actions button.delete {
+      background-color: #e74c3c;
+    }
+    .actions button.delete:hover {
+      background-color: #c0392b;
+    }
+    .icon-cell {
+      font-size: 20px;
+      text-align: center;
+    }
+    .option-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+    }
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+        font-size: 16px;
+      }
+      h1 {
+        font-size: 24px;
+      }
+      label {
+        font-size: 18px;
+      }
+      input, select {
+        font-size: 16px;
+        padding: 10px;
+        height: 50px; /* Ajuste para móviles */
+      }
+      .option-btn {
+        font-size: 16px;
+        width: 80px;
+        height: 80px;
+        line-height: 80px;
+        padding: 5px;
+      }
+      button {
+        font-size: 18px;
+        padding: 12px;
+      }
+      th, td {
+        font-size: 14px;
+        padding: 10px;
+      }
+      .actions button {
+        font-size: 14px;
+        padding: 6px 12px;
+      }
+      .icon-cell {
+        font-size: 18px;
+      }
+      .option-group {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Sistema de Inventario de Ropa</h1>
+    <div class="form-group">
+      <label for="nombre">Nombre del Producto</label>
+      <input type="text" id="nombre" placeholder="Ej: Remera Básica">
+      <label for="cantidad">Cantidad</label>
+      <input type="number" id="cantidad" min="0" placeholder="Ej: 10">
+      <label for="color">Color</label>
+      <select id="color">
+        <option value="Rojo">Rojo</option>
+        <option value="Azul">Azul</option>
+        <option value="Negro">Negro</option>
+        <option value="Blanco">Blanco</option>
+        <option value="Verde">Verde</option>
+      </select>
+      <label for="talle">Talle</label>
+      <input type="text" id="talle" list="talles" placeholder="Ej: 3 o S">
+      <datalist id="talles">
+        <option value="1">
+        <option value="2">
+        <option value="3">
+        <option value="4">
+        <option value="5">
+        <option value="6">
+        <option value="7">
+        <option value="8">
+      </datalist>
+      <label for="tela">Tela</label>
+      <select id="tela">
+        <option value="Algodón">Algodón</option>
+        <option value="Poliéster">Poliéster</option>
+        <option value="Lino">Lino</option>
+        <option value="Lana">Lana</option>
+      </select>
+      <label>Temporada</label>
+      <div class="option-group">
+        <button class="option-btn blue" onclick="seleccionarTemporada('Verano')">☀️ Verano</button>
+        <button class="option-btn red" onclick="seleccionarTemporada('Invierno')">❄️ Invierno</button>
+        <button class="option-btn yellow" onclick="seleccionarTemporada('Todo el año')">📅 Todo el año</button>
+      </div>
+      <label>Tipo</label>
+      <div class="option-group">
+        <button class="option-btn green" onclick="seleccionarTipo('Hombre')">👨 Hombre</button>
+        <button class="option-btn blue" onclick="seleccionarTipo('Mujer')">👩 Mujer</button>
+        <button class="option-btn red" onclick="seleccionarTipo('Niño')">🧒 Niño</button>
+      </div>
+      <button onclick="agregarOEditarProducto()">Agregar o Editar Producto</button>
+      <button class="export" onclick="exportarPDF()">Exportar a PDF</button>
+    </div>
+    <table id="tablaInventario">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Cantidad</th>
+          <th>Color</th>
+          <th>Talle</th>
+          <th>Tela</th>
+          <th>Temporada</th>
+          <th>Tipo</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="cuerpoTabla"></tbody>
+    </table>
+  </div>
+
+  <script>
+    let inventario = JSON.parse(localStorage.getItem('inventario')) || [];
+    let editIndex = -1;
+    let temporadaSeleccionada = '';
+    let tipoSeleccionado = '';
+
+    function generarId() {
+      return '_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    function seleccionarTemporada(temporada) {
+      temporadaSeleccionada = temporada;
+      document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+      event.target.classList.add('selected');
+    }
+
+    function seleccionarTipo(tipo) {
+      tipoSeleccionado = tipo;
+      document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+      event.target.classList.add('selected');
+    }
+
+    function agregarOEditarProducto() {
+      const nombre = document.getElementById('nombre').value.trim();
+      const cantidad = document.getElementById('cantidad').value;
+      const color = document.getElementById('color').value;
+      const talle = document.getElementById('talle').value.trim();
+      const tela = document.getElementById('tela').value;
+      const temporada = temporadaSeleccionada;
+      const tipo = tipoSeleccionado;
+
+      let errores = [];
+      if (!nombre) {
+        errores.push("El nombre del producto es obligatorio.");
+      }
+      if (!cantidad || isNaN(cantidad) || parseInt(cantidad) < 0) {
+        errores.push("La cantidad debe ser un número mayor o igual a 0.");
+      }
+      if (!talle || (parseFloat(talle) <= 0 && !isNaN(parseFloat(talle)))) {
+        errores.push("El talle debe ser un valor válido mayor a 0 (puede ser numérico o texto como 'S').");
+      }
+      if (!temporada) {
+        errores.push("Debes seleccionar una temporada.");
+      }
+      if (!tipo) {
+        errores.push("Debes seleccionar un tipo.");
+      }
+
+      if (errores.length > 0) {
+        alert("Errores encontrados:\n- " + errores.join("\n- "));
+        return;
+      }
+
+      const producto = { id: editIndex === -1 ? generarId() : inventario[editIndex].id, nombre, cantidad: parseInt(cantidad), color, talle, tela, temporada, tipo };
+
+      if (editIndex === -1) {
+        inventario.push(producto);
+      } else {
+        inventario[editIndex] = producto;
+        editIndex = -1;
+      }
+
+      localStorage.setItem('inventario', JSON.stringify(inventario));
+      actualizarTabla();
+      limpiarFormulario();
+    }
+
+    function editarProducto(id) {
+      editIndex = inventario.findIndex(p => p.id === id);
+      const producto = inventario[editIndex];
+      document.getElementById('nombre').value = producto.nombre;
+      document.getElementById('cantidad').value = producto.cantidad;
+      document.getElementById('color').value = producto.color;
+      document.getElementById('talle').value = producto.talle;
+      document.getElementById('tela').value = producto.tela;
+      temporadaSeleccionada = producto.temporada;
+      tipoSeleccionado = producto.tipo;
+      document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+      document.querySelector(`.option-btn[onclick*="${temporadaSeleccionada.toLowerCase()}"]`).classList.add('selected');
+      document.querySelector(`.option-btn[onclick*="${tipoSeleccionado.toLowerCase()}"]`).classList.add('selected');
+    }
+
+    function eliminarProducto(id) {
+      if (confirm('¿Estás seguro de eliminar este producto?')) {
+        inventario = inventario.filter(p => p.id !== id);
+        localStorage.setItem('inventario', JSON.stringify(inventario));
+        actualizarTabla();
+      }
+    }
+
+    function actualizarTabla() {
+      const cuerpoTabla = document.getElementById('cuerpoTabla');
+      cuerpoTabla.innerHTML = '';
+      inventario.forEach(producto => {
+        const temporadaIcono = producto.temporada === 'Verano' ? '☀️' : producto.temporada === 'Invierno' ? '❄️' : '📅';
+        const tipoIcono = producto.tipo === 'Hombre' ? '👨' : producto.tipo === 'Mujer' ? '👩' : '🧒';
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+          <td>${producto.nombre}</td>
+          <td>${producto.cantidad}</td>
+          <td>${producto.color}</td>
+          <td>${producto.talle}</td>
+          <td>${producto.tela}</td>
+          <td class="icon-cell">${temporadaIcono} ${producto.temporada}</td>
+          <td class="icon-cell">${tipoIcono} ${producto.tipo}</td>
+          <td class="actions">
+            <button onclick="editarProducto('${producto.id}')">Editar</button>
+            <button class="delete" onclick="eliminarProducto('${producto.id}')">Eliminar</button>
+          </td>
+        `;
+        cuerpoTabla.appendChild(fila);
+      });
+    }
+
+    function limpiarFormulario() {
+      document.getElementById('nombre').value = '';
+      document.getElementById('cantidad').value = '';
+      document.getElementById('color').selectedIndex = 0;
+      document.getElementById('talle').value = '';
+      document.getElementById('tela').selectedIndex = 0;
+      temporadaSeleccionada = '';
+      tipoSeleccionado = '';
+      document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+    }
+
+    function exportarPDF() {
+      if (inventario.length === 0) {
+        alert('El inventario está vacío. Agrega productos antes de exportar.');
+        return;
+      }
+
+      const latexContent = `
+\\documentclass[a4paper,12pt]{article}
+\\usepackage[utf8]{inputenc}
+\\usepackage{geometry}
+\\geometry{margin=1in}
+\\usepackage{booktabs}
+\\usepackage{longtable}
+\\usepackage{emoji}
+\\usepackage{pdflscape}
+\\title{Informe de Inventario de Ropa}
+\\author{}
+\\date{${new Date().toLocaleDateString('es-ES')}}
+\\begin{document}
+\\maketitle
+\\begin{landscape}
+\\section*{Inventario de Ropa}
+\\begin{longtable}{p{3cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{3cm}|p{2cm}}
+\\toprule
+\\textbf{Nombre} & \\textbf{Cantidad} & \\textbf{Color} & \\textbf{Talle} & \\textbf{Tela} & \\textbf{Temporada} & \\textbf{Tipo} \\\\
+\\midrule
+\\endhead
+${inventario.map(p => {
+  const temporadaIcono = p.temporada === 'Verano' ? '\\emoji{sun}' : p.temporada === 'Invierno' ? '\\emoji{snowflake}' : '\\emoji{calendar}';
+  const tipoIcono = p.tipo === 'Hombre' ? '\\emoji{man}' : p.tipo === 'Mujer' ? '\\emoji{woman}' : '\\emoji{child}';
+  return `${p.nombre.replace(/&/g, '\\&')} & ${p.cantidad} & ${p.color} & ${p.talle} & ${p.tela} & ${temporadaIcono} ${p.temporada} & ${tipoIcono} ${p.tipo} \\\\`;
+}).join('\n')}
+\\bottomrule
+\\end{longtable}
+\\end{landscape}
+\\end{document}
+      `.trim();
+
+      const blob = new Blob([latexContent], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'inventario.tex';
+      a.click();
+      URL.revokeObjectURL(url);
+      alert('Se ha descargado el archivo inventario.tex. Compílalo con un editor LaTeX (como Overleaf) para generar el PDF.');
+    }
+
+    // Cargar la tabla al iniciar
+    actualizarTabla();
+  </script>
+</body>
+</html>
