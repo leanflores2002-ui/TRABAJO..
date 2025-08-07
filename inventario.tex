@@ -1,0 +1,25 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{emoji}
+\usepackage{pdflscape}
+\title{Informe de Inventario de Ropa}
+\author{}
+\date{\today}
+\begin{document}
+\maketitle
+\begin{landscape}
+\section*{Inventario de Ropa}
+\begin{longtable}{p{3cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{3cm}|p{2cm}}
+\toprule
+\textbf{Nombre} & \textbf{Cantidad} & \textbf{Color} & \textbf{Talle} & \textbf{Tela} & \textbf{Temporada} & \textbf{Tipo} \\
+\midrule
+\endhead
+% Aquí se insertan las filas dinámicamente desde JavaScript
+\bottomrule
+\end{longtable}
+\end{landscape}
+\end{document}
