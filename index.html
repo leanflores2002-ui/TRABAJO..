@@ -75,11 +75,11 @@
       margin: 5px;
       border: 2px solid transparent;
       border-radius: 10px;
-      font-size: 16px; /* Reducido para mejor ajuste */
+      font-size: 16px;
       cursor: pointer;
       text-align: center;
       vertical-align: middle;
-      line-height: 20px; /* Ajustado para texto e icono */
+      line-height: 20px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       transition: all 0.3s ease;
       white-space: normal;
@@ -175,10 +175,10 @@
         height: 50px;
       }
       .option-btn {
-        font-size: 14px; /* Ajuste para móviles */
+        font-size: 14px;
         width: 80px;
         height: 80px;
-        line-height: 18px; /* Ajustado para móviles */
+        line-height: 18px;
         padding: 5px;
       }
       button {
@@ -207,17 +207,30 @@
     <h1>Sistema de Inventario de Ropa</h1>
     <div class="form-group">
       <label for="nombre">Nombre del Producto</label>
-      <input type="text" id="nombre" placeholder="Ej: Remera Básica">
+      <input type="text" id="nombre" list="nombresRecomendados" placeholder="Ej: CALZA">
+      <datalist id="nombresRecomendados">
+        <option value="CALZA">
+        <option value="BABUCHA">
+        <option value="PANTALON">
+        <option value="PALAZO">
+        <option value="TOP">
+        <option value="CAMPERA">
+        <option value="BUZO">
+        <option value="REMERA">
+        <option value="CAMISETA">
+      </datalist>
       <label for="cantidad">Cantidad</label>
       <input type="number" id="cantidad" min="0" placeholder="Ej: 10">
       <label for="color">Color</label>
-      <select id="color">
-        <option value="Rojo">Rojo</option>
-        <option value="Azul">Azul</option>
-        <option value="Negro">Negro</option>
-        <option value="Blanco">Blanco</option>
-        <option value="Verde">Verde</option>
-      </select>
+      <input type="text" id="color" list="coloresRecomendados" placeholder="Ej: negro">
+      <datalist id="coloresRecomendados">
+        <option value="negro">
+        <option value="azul marino">
+        <option value="francia">
+        <option value="bordo">
+        <option value="melange">
+        <option value="topo">
+      </datalist>
       <label for="talle">Talle</label>
       <input type="text" id="talle" list="talles" placeholder="Ej: 3 o S">
       <datalist id="talles">
@@ -232,10 +245,14 @@
       </datalist>
       <label for="tela">Tela</label>
       <select id="tela">
-        <option value="Algodón">Algodón</option>
-        <option value="Poliéster">Poliéster</option>
-        <option value="Lino">Lino</option>
-        <option value="Lana">Lana</option>
+        <option value="LYCRA">LYCRA</option>
+        <option value="SAPLEX JASPEADO">SAPLEX JASPEADO</option>
+        <option value="ALGODON CON LYCRA">ALGODON CON LYCRA</option>
+        <option value="RUSTICO">RUSTICO</option>
+        <option value="MODAL">MODAL</option>
+        <option value="MORLEY">MORLEY</option>
+        <option value="JEAN">JEAN</option>
+        <option value="CORDERITO">CORDERITO</option>
       </select>
       <label>Temporada</label>
       <div class="option-group">
@@ -294,7 +311,7 @@
     function agregarOEditarProducto() {
       const nombre = document.getElementById('nombre').value.trim();
       const cantidad = document.getElementById('cantidad').value;
-      const color = document.getElementById('color').value;
+      const color = document.getElementById('color').value.trim();
       const talle = document.getElementById('talle').value.trim();
       const tela = document.getElementById('tela').value;
       const temporada = temporadaSeleccionada;
@@ -306,6 +323,9 @@
       }
       if (!cantidad || isNaN(cantidad) || parseInt(cantidad) < 0) {
         errores.push("La cantidad debe ser un número mayor o igual a 0.");
+      }
+      if (!color) {
+        errores.push("El color es obligatorio.");
       }
       if (!talle || (parseFloat(talle) <= 0 && !isNaN(parseFloat(talle)))) {
         errores.push("El talle debe ser un valor válido mayor a 0 (puede ser numérico o texto como 'S').");
@@ -386,7 +406,7 @@
     function limpiarFormulario() {
       document.getElementById('nombre').value = '';
       document.getElementById('cantidad').value = '';
-      document.getElementById('color').selectedIndex = 0;
+      document.getElementById('color').value = '';
       document.getElementById('talle').value = '';
       document.getElementById('tela').selectedIndex = 0;
       temporadaSeleccionada = '';
