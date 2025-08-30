@@ -118,6 +118,16 @@
     button.export:hover {
       background-color: #27ae60;
     }
+    button.import {
+      background-color: #f39c12;
+    }
+    button.import:hover {
+      background-color: #e67e22;
+    }
+    #csv-upload {
+      margin-top: 10px;
+      display: none;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -137,6 +147,27 @@
     td {
       background-color: #f9fbfc;
     }
+    tr {
+      cursor: move;
+    }
+    tr.dragging {
+      opacity: 0.5;
+      background-color: #e0e0e0;
+    }
+    .drag-icon {
+      font-size: 20px;
+      color: #34495e;
+      cursor: move;
+      text-align: center;
+      width: 40px;
+    }
+    .drag-icon:hover {
+      color: #3498db;
+    }
+    .icon-cell {
+      font-size: 20px;
+      text-align: center;
+    }
     .actions button {
       width: auto;
       padding: 8px 16px;
@@ -148,10 +179,6 @@
     }
     .actions button.delete:hover {
       background-color: #c0392b;
-    }
-    .icon-cell {
-      font-size: 20px;
-      text-align: center;
     }
     .option-group {
       display: flex;
@@ -193,8 +220,9 @@
         font-size: 14px;
         padding: 6px 12px;
       }
-      .icon-cell {
-        font-size: 18px;
+      .drag-icon, .icon-cell {
+        font-size: 16px;
+        width: 30px;
       }
       .option-group {
         flex-direction: column;
@@ -256,8 +284,8 @@
       </select>
       <label>Temporada</label>
       <div class="option-group">
-        <button class="option-btn blue" onclick="seleccionarTemporada('Verano')">☀️<br>Verano</button>
-        <button class="option-btn red" onclick="seleccionarTemporada('Invierno')">❄️<br>Invierno</button>
+        <button class="option-btn blue" onclick="seleccionarTemporada('Verano')">☀<br>Verano</button>
+        <button class="option-btn red" onclick="seleccionarTemporada('Invierno')">❄<br>Invierno</button>
         <button class="option-btn yellow" onclick="seleccionarTemporada('Todo el año')">📅<br>Todo el año</button>
       </div>
       <label>Tipo</label>
@@ -267,11 +295,20 @@
         <button class="option-btn red" onclick="seleccionarTipo('Niño')">🧒<br>Niño</button>
       </div>
       <button onclick="agregarOEditarProducto()">Agregar o Editar Producto</button>
-      <button class="export" onclick="exportarPDF()">Exportar a PDF</button>
+      <button class="import" onclick="document.getElementById('csv-upload').click()">Importar CSV</button>
+      <input type="file" id="csv-upload" accept=".csv" onchange="importarCSV(this.files[0])">
+      <button class="export" onclick="exportarPDFyCSV()">Exportar a PDF y CSV</button>
+    </div>
+    <div class="form-group">
+      <label for="filtroArticulo">Filtrar por Artículo</label>
+      <select id="filtroArticulo" onchange="filtrarTabla()">
+        <option value="">Todos</option>
+      </select>
     </div>
     <table id="tablaInventario">
       <thead>
         <tr>
+          <th style="width: 40px;">Mover</th>
           <th>Nombre</th>
           <th>Cantidad</th>
           <th>Color</th>
@@ -291,6 +328,7 @@
     let editIndex = -1;
     let temporadaSeleccionada = '';
     let tipoSeleccionado = '';
+    let draggedRow = null;
 
     function generarId() {
       return '_' + Math.random().toString(36).substr(2, 9);
@@ -345,7 +383,11 @@
       const producto = { id: editIndex === -1 ? generarId() : inventario[editIndex].id, nombre, cantidad: parseInt(cantidad), color, talle, tela, temporada, tipo };
 
       if (editIndex === -1) {
-        inventario.push(producto);
+        if (inventario.length > 1) {
+          inventario.splice(inventario.length - 1, 0, producto);
+        } else {
+          inventario.push(producto);
+        }
       } else {
         inventario[editIndex] = producto;
         editIndex = -1;
@@ -369,6 +411,7 @@
       document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
       document.querySelector(`.option-btn[onclick*="${temporadaSeleccionada.toLowerCase()}"]`).classList.add('selected');
       document.querySelector(`.option-btn[onclick*="${tipoSeleccionado.toLowerCase()}"]`).classList.add('selected');
+      document.getElementById('nombre').focus();
     }
 
     function eliminarProducto(id) {
@@ -383,10 +426,13 @@
       const cuerpoTabla = document.getElementById('cuerpoTabla');
       cuerpoTabla.innerHTML = '';
       inventario.forEach(producto => {
-        const temporadaIcono = producto.temporada === 'Verano' ? '☀️' : producto.temporada === 'Invierno' ? '❄️' : '📅';
+        const temporadaIcono = producto.temporada === 'Verano' ? '☀' : producto.temporada === 'Invierno' ? '❄' : '📅';
         const tipoIcono = producto.tipo === 'Hombre' ? '👨' : producto.tipo === 'Mujer' ? '👩' : '🧒';
         const fila = document.createElement('tr');
+        fila.setAttribute('draggable', 'true');
+        fila.setAttribute('data-id', producto.id);
         fila.innerHTML = `
+          <td class="drag-icon">☰</td>
           <td>${producto.nombre}</td>
           <td>${producto.cantidad}</td>
           <td>${producto.color}</td>
@@ -399,27 +445,165 @@
             <button class="delete" onclick="eliminarProducto('${producto.id}')">Eliminar</button>
           </td>
         `;
+        // Agregar eventos de arrastrar y soltar
+        fila.addEventListener('dragstart', handleDragStart);
+        fila.addEventListener('dragover', handleDragOver);
+        fila.addEventListener('drop', handleDrop);
+        fila.addEventListener('dragend', handleDragEnd);
+        // Agregar evento de doble clic para editar, excluyendo ciertas columnas
+        fila.addEventListener('dblclick', (e) => {
+          if (!e.target.closest('.drag-icon') && !e.target.closest('.actions')) {
+            editarProducto(producto.id);
+          }
+        });
         cuerpoTabla.appendChild(fila);
+      });
+      actualizarFiltroArticulos();
+      filtrarTabla();
+    }
+
+    function handleDragStart(e) {
+      draggedRow = e.target;
+      e.target.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', e.target.getAttribute('data-id'));
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      const droppedId = e.dataTransfer.getData('text/plain');
+      const targetId = e.target.closest('tr').getAttribute('data-id');
+      if (droppedId !== targetId) {
+        const draggedIndex = inventario.findIndex(p => p.id === droppedId);
+        const targetIndex = inventario.findIndex(p => p.id === targetId);
+        const [draggedProducto] = inventario.splice(draggedIndex, 1);
+        inventario.splice(targetIndex, 0, draggedProducto);
+        localStorage.setItem('inventario', JSON.stringify(inventario));
+        actualizarTabla();
+      }
+    }
+
+    function handleDragEnd(e) {
+      e.target.classList.remove('dragging');
+      draggedRow = null;
+    }
+
+    function actualizarFiltroArticulos() {
+      const filtroArticulo = document.getElementById('filtroArticulo');
+      const articulos = [...new Set(inventario.map(p => {
+        const primeraPalabra = p.nombre.split(' ')[0].toLowerCase();
+        return primeraPalabra.charAt(0).toUpperCase() + primeraPalabra.slice(1);
+      }))];
+      filtroArticulo.innerHTML = '<option value="">Todos</option>';
+      articulos.sort().forEach(articulo => {
+        const option = document.createElement('option');
+        option.value = articulo.toLowerCase();
+        option.textContent = articulo;
+        filtroArticulo.appendChild(option);
       });
     }
 
-    function limpiarFormulario() {
-      document.getElementById('nombre').value = '';
-      document.getElementById('cantidad').value = '';
-      document.getElementById('color').value = '';
-      document.getElementById('talle').value = '';
-      document.getElementById('tela').selectedIndex = 0;
-      temporadaSeleccionada = '';
-      tipoSeleccionado = '';
-      document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+    function filtrarTabla() {
+      const filtro = document.getElementById('filtroArticulo').value.toLowerCase();
+      const rows = document.querySelectorAll('#cuerpoTabla tr');
+      rows.forEach(row => {
+        const nombreCell = row.querySelector('td:nth-child(2)');
+        if (nombreCell) {
+          const primeraPalabra = nombreCell.textContent.split(' ')[0].toLowerCase();
+          if (!filtro || primeraPalabra === filtro) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        }
+      });
     }
 
-    function exportarPDF() {
+    function importarCSV(file) {
+      if (!file) {
+        alert('No se seleccionó ningún archivo.');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const text = e.target.result;
+        console.log('Contenido del CSV:', text);
+        const lines = text.split('\n').filter(line => line.trim() !== '');
+        let importedCount = 0;
+
+        lines.forEach((line, index) => {
+          if (index === 0) return; // Ignorar encabezado
+          const separators = [',', '|'];
+          let parts = null;
+          for (let sep of separators) {
+            parts = line.split(sep).map(part => part.trim());
+            if (parts.length >= 7) break;
+          }
+          if (!parts || parts.length < 7) {
+            console.log('Línea no válida:', line);
+            return;
+          }
+
+          const nombre = parts[0];
+          const cantidad = parseInt(parts[1]);
+          const color = parts[2];
+          const talle = parts[3];
+          const tela = parts[4];
+          const temporada = parts[5];
+          const tipo = parts[6];
+
+          let errores = [];
+          if (!nombre) errores.push(`Nombre vacío en línea ${index + 1}`);
+          if (isNaN(cantidad) || cantidad < 0) errores.push(`Cantidad no válida en línea ${index + 1}`);
+          if (!color) errores.push(`Color vacío en línea ${index + 1}`);
+          if (!talle || (parseFloat(talle) <= 0 && !isNaN(parseFloat(talle)))) errores.push(`Talle no válido en línea ${index + 1}`);
+          if (!tela) errores.push(`Tela vacía en línea ${index + 1}`);
+          if (!temporada) errores.push(`Temporada vacía en línea ${index + 1}`);
+          if (!tipo) errores.push(`Tipo vacío en línea ${index + 1}`);
+
+          if (errores.length > 0) {
+            console.log('Errores en línea:', errores);
+            return;
+          }
+
+          const producto = { id: generarId(), nombre, cantidad, color, talle, tela, temporada, tipo };
+          if (inventario.length > 1) {
+            inventario.splice(inventario.length - 1, 0, producto);
+          } else {
+            inventario.push(producto);
+          }
+          importedCount++;
+        });
+
+        if (importedCount === 0) {
+          alert('No se encontraron datos válidos en el CSV. Asegúrate de que el formato sea: Nombre|Cantidad|Color|Talle|Tela|Temporada|Tipo (o con comas). Revisa la consola para más detalles.');
+          return;
+        }
+
+        localStorage.setItem('inventario', JSON.stringify(inventario));
+        actualizarTabla();
+        alert(`Se importaron ${importedCount} productos del CSV. Revisa la tabla para editar si es necesario.`);
+      };
+      reader.onerror = function() {
+        console.error('Error al leer el archivo:', reader.error);
+        alert('Error al leer el archivo CSV. Revisa la consola para más detalles.');
+      };
+      reader.readAsText(file);
+    }
+
+    function exportarPDFyCSV() {
       if (inventario.length === 0) {
         alert('El inventario está vacío. Agrega productos antes de exportar.');
         return;
       }
 
+      // Exportar a PDF
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({
         orientation: 'landscape'
@@ -448,9 +632,37 @@
       });
 
       doc.save('inventario.pdf');
+
+      // Exportar a CSV
+      let csvContent = 'Nombre|Cantidad|Color|Talle|Tela|Temporada|Tipo\n';
+      inventario.forEach(producto => {
+        csvContent += `${producto.nombre}|${producto.cantidad}|${producto.color}|${producto.talle}|${producto.tela}|${producto.temporada}|${producto.tipo}\n`;
+      });
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'inventario.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
     }
 
-    // Cargar la tabla al iniciar
+    function limpiarFormulario() {
+      document.getElementById('nombre').value = '';
+      document.getElementById('cantidad').value = '';
+      document.getElementById('color').value = '';
+      document.getElementById('talle').value = '';
+      document.getElementById('tela').selectedIndex = 0;
+      temporadaSeleccionada = '';
+      tipoSeleccionado = '';
+      document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+    }
+
     actualizarTabla();
   </script>
 </body>
