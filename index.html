@@ -409,8 +409,8 @@
       temporadaSeleccionada = producto.temporada;
       tipoSeleccionado = producto.tipo;
       document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
-      document.querySelector(`.option-btn[onclick*="${temporadaSeleccionada.toLowerCase()}"]`).classList.add('selected');
-      document.querySelector(`.option-btn[onclick*="${tipoSeleccionado.toLowerCase()}"]`).classList.add('selected');
+      document.querySelector(`.option-btn[onclick="seleccionarTemporada('${temporadaSeleccionada}')"]`)?.classList.add('selected');
+      document.querySelector(`.option-btn[onclick="seleccionarTipo('${tipoSeleccionado}')"]`)?.classList.add('selected');
       document.getElementById('nombre').focus();
     }
 
