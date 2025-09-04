@@ -29,9 +29,7 @@
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
-    .form-group {
-      margin-bottom: 20px;
-    }
+    .form-group { margin-bottom: 20px; }
     label {
       display: block;
       margin-bottom: 8px;
@@ -39,7 +37,7 @@
       font-weight: 600;
       font-size: 20px;
     }
-    input {
+    input, select {
       width: 100%;
       padding: 12px;
       font-size: 18px;
@@ -49,25 +47,7 @@
       background-color: #f9fbfc;
       transition: border-color 0.3s;
     }
-    input:focus {
-      border-color: #3498db;
-      outline: none;
-    }
-    select {
-      width: 100%;
-      padding: 18px;
-      font-size: 20px;
-      border: 2px solid #bdc3c7;
-      border-radius: 8px;
-      box-sizing: border-box;
-      background-color: #f9fbfc;
-      transition: border-color 0.3s;
-      height: 60px;
-    }
-    select:focus {
-      border-color: #3498db;
-      outline: none;
-    }
+    input:focus, select:focus { border-color: #3498db; outline: none; }
     .option-btn {
       display: inline-block;
       width: 100px;
@@ -78,21 +58,16 @@
       font-size: 16px;
       cursor: pointer;
       text-align: center;
-      vertical-align: middle;
       line-height: 20px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       transition: all 0.3s ease;
-      white-space: normal;
       padding: 5px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
     }
-    .option-btn.selected {
-      border-color: #34495e;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    }
+    .option-btn.selected { border-color: #34495e; box-shadow: 0 6px 12px rgba(0,0,0,0.2); }
     .option-btn.blue { background-color: #3498db; color: white; }
     .option-btn.red { background-color: #e74c3c; color: white; }
     .option-btn.yellow { background-color: #f1c40f; color: #333; }
@@ -109,124 +84,45 @@
       transition: background-color 0.3s;
       margin-top: 10px;
     }
-    button:hover {
-      background-color: #2980b9;
-    }
-    button.export {
-      background-color: #2ecc71;
-    }
-    button.export:hover {
-      background-color: #27ae60;
-    }
-    button.import {
-      background-color: #f39c12;
-    }
-    button.import:hover {
-      background-color: #e67e22;
-    }
-    #csv-upload {
-      margin-top: 10px;
-      display: none;
-    }
+    button:hover { background-color: #2980b9; }
+    button.export { background-color: #2ecc71; }
+    button.export:hover { background-color: #27ae60; }
+    button.import { background-color: #f39c12; }
+    button.import:hover { background-color: #e67e22; }
+    button.delete-all { background-color: #e74c3c; }
+    button.delete-all:hover { background-color: #c0392b; }
+    #csv-upload { margin-top: 10px; display: none; }
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
       font-size: 16px;
     }
-    th, td {
-      border: 1px solid #dfe6e9;
-      padding: 12px;
-      text-align: left;
-    }
-    th {
-      background-color: #3498db;
-      color: white;
-      font-size: 18px;
-    }
-    td {
-      background-color: #f9fbfc;
-    }
-    tr {
-      cursor: move;
-    }
-    tr.dragging {
-      opacity: 0.5;
-      background-color: #e0e0e0;
-    }
-    .drag-icon {
-      font-size: 20px;
-      color: #34495e;
-      cursor: move;
-      text-align: center;
-      width: 40px;
-    }
-    .drag-icon:hover {
-      color: #3498db;
-    }
-    .icon-cell {
-      font-size: 20px;
-      text-align: center;
-    }
+    th, td { border: 1px solid #dfe6e9; padding: 12px; text-align: left; }
+    th { background-color: #3498db; color: white; font-size: 18px; }
+    td { background-color: #f9fbfc; }
+    tr { cursor: move; }
+    tr.dragging { opacity: 0.5; background-color: #e0e0e0; }
+    .drag-icon { font-size: 20px; color: #34495e; cursor: move; text-align: center; width: 40px; }
+    .drag-icon:hover { color: #3498db; }
+    .icon-cell { font-size: 20px; text-align: center; }
     .actions button {
-      width: auto;
-      padding: 8px 16px;
-      font-size: 16px;
-      margin-right: 10px;
+      width: auto; padding: 8px 16px; font-size: 16px; margin-right: 10px;
     }
-    .actions button.delete {
-      background-color: #e74c3c;
-    }
-    .actions button.delete:hover {
-      background-color: #c0392b;
-    }
-    .option-group {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-start;
-    }
+    .actions button.delete { background-color: #e74c3c; }
+    .actions button.delete:hover { background-color: #c0392b; }
+    .option-group { display: flex; flex-wrap: wrap; justify-content: flex-start; }
     @media (max-width: 600px) {
-      body {
-        padding: 10px;
-        font-size: 16px;
-      }
-      h1 {
-        font-size: 24px;
-      }
-      label {
-        font-size: 18px;
-      }
-      input, select {
-        font-size: 16px;
-        padding: 10px;
-        height: 50px;
-      }
-      .option-btn {
-        font-size: 14px;
-        width: 80px;
-        height: 80px;
-        line-height: 18px;
-        padding: 5px;
-      }
-      button {
-        font-size: 18px;
-        padding: 12px;
-      }
-      th, td {
-        font-size: 14px;
-        padding: 10px;
-      }
-      .actions button {
-        font-size: 14px;
-        padding: 6px 12px;
-      }
-      .drag-icon, .icon-cell {
-        font-size: 16px;
-        width: 30px;
-      }
-      .option-group {
-        flex-direction: column;
-      }
+      body { padding: 10px; font-size: 16px; }
+      h1 { font-size: 24px; }
+      label { font-size: 18px; }
+      input, select { font-size: 16px; padding: 10px; height: 50px; }
+      .option-btn { font-size: 14px; width: 80px; height: 80px; line-height: 18px; }
+      button { font-size: 18px; padding: 12px; }
+      th, td { font-size: 14px; padding: 10px; }
+      .actions button { font-size: 14px; padding: 6px 12px; }
+      .drag-icon, .icon-cell { font-size: 16px; width: 30px; }
+      .option-group { flex-direction: column; }
     }
   </style>
 </head>
@@ -262,14 +158,9 @@
       <label for="talle">Talle</label>
       <input type="text" id="talle" list="talles" placeholder="Ej: 3 o S">
       <datalist id="talles">
-        <option value="1">
-        <option value="2">
-        <option value="3">
-        <option value="4">
-        <option value="5">
-        <option value="6">
-        <option value="7">
-        <option value="8">
+        <option value="1"><option value="2"><option value="3">
+        <option value="4"><option value="5"><option value="6">
+        <option value="7"><option value="8">
       </datalist>
       <label for="tela">Tela</label>
       <select id="tela">
@@ -298,7 +189,9 @@
       <button class="import" onclick="document.getElementById('csv-upload').click()">Importar CSV</button>
       <input type="file" id="csv-upload" accept=".csv" onchange="importarCSV(this.files[0])">
       <button class="export" onclick="exportarPDFyCSV()">Exportar a PDF y CSV</button>
+      <button class="delete-all" onclick="borrarTodoInventario()">Borrar Todo</button>
     </div>
+
     <div class="form-group">
       <label for="filtroArticulo">Filtrar por Artículo</label>
       <select id="filtroArticulo" onchange="filtrarTabla()">
@@ -308,15 +201,9 @@
     <table id="tablaInventario">
       <thead>
         <tr>
-          <th style="width: 40px;">Mover</th>
-          <th>Nombre</th>
-          <th>Cantidad</th>
-          <th>Color</th>
-          <th>Talle</th>
-          <th>Tela</th>
-          <th>Temporada</th>
-          <th>Tipo</th>
-          <th>Acciones</th>
+          <th style="width:40px;">Mover</th>
+          <th>Nombre</th><th>Cantidad</th><th>Color</th><th>Talle</th>
+          <th>Tela</th><th>Temporada</th><th>Tipo</th><th>Acciones</th>
         </tr>
       </thead>
       <tbody id="cuerpoTabla"></tbody>
@@ -325,342 +212,254 @@
 
   <script>
     let inventario = JSON.parse(localStorage.getItem('inventario')) || [];
-    let editIndex = -1;
-    let temporadaSeleccionada = '';
-    let tipoSeleccionado = '';
-    let draggedRow = null;
+    let editIndex = -1, temporadaSeleccionada = '', tipoSeleccionado = '', draggedRow = null;
 
-    function generarId() {
-      return '_' + Math.random().toString(36).substr(2, 9);
+    function generarId(){ return '_' + Math.random().toString(36).substr(2, 9); }
+    function seleccionarTemporada(t){ temporadaSeleccionada=t;document.querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected'));event.target.classList.add('selected'); }
+    function seleccionarTipo(t){ tipoSeleccionado=t;document.querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected'));event.target.classList.add('selected'); }
+
+    function agregarOEditarProducto(){
+      const nombre=document.getElementById('nombre').value.trim();
+      const cantidad=document.getElementById('cantidad').value;
+      const color=document.getElementById('color').value.trim();
+      const talle=document.getElementById('talle').value.trim();
+      const tela=document.getElementById('tela').value;
+      const temporada=temporadaSeleccionada, tipo=tipoSeleccionado;
+
+      let errores=[];
+      if(!nombre) errores.push("El nombre es obligatorio.");
+      if(!cantidad||isNaN(cantidad)||parseInt(cantidad)<0) errores.push("Cantidad inválida.");
+      if(!color) errores.push("El color es obligatorio.");
+      if(!talle||(parseFloat(talle)<=0&&!isNaN(parseFloat(talle)))) errores.push("Talle inválido.");
+      if(!temporada) errores.push("Seleccioná temporada.");
+      if(!tipo) errores.push("Seleccioná tipo.");
+
+      if(errores.length>0){ alert("Errores:\n- "+errores.join("\n- "));return; }
+
+      const producto={ id: editIndex===-1?generarId():inventario[editIndex].id, nombre, cantidad:parseInt(cantidad), color, talle, tela, temporada, tipo };
+
+      if(editIndex===-1){ inventario.push(producto);} else { inventario[editIndex]=producto; editIndex=-1; }
+
+      localStorage.setItem('inventario',JSON.stringify(inventario));
+      actualizarTabla(); limpiarFormulario();
     }
 
-    function seleccionarTemporada(temporada) {
-      temporadaSeleccionada = temporada;
-      document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
-      event.target.classList.add('selected');
-    }
-
-    function seleccionarTipo(tipo) {
-      tipoSeleccionado = tipo;
-      document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
-      event.target.classList.add('selected');
-    }
-
-    function agregarOEditarProducto() {
-      const nombre = document.getElementById('nombre').value.trim();
-      const cantidad = document.getElementById('cantidad').value;
-      const color = document.getElementById('color').value.trim();
-      const talle = document.getElementById('talle').value.trim();
-      const tela = document.getElementById('tela').value;
-      const temporada = temporadaSeleccionada;
-      const tipo = tipoSeleccionado;
-
-      let errores = [];
-      if (!nombre) {
-        errores.push("El nombre del producto es obligatorio.");
-      }
-      if (!cantidad || isNaN(cantidad) || parseInt(cantidad) < 0) {
-        errores.push("La cantidad debe ser un número mayor o igual a 0.");
-      }
-      if (!color) {
-        errores.push("El color es obligatorio.");
-      }
-      if (!talle || (parseFloat(talle) <= 0 && !isNaN(parseFloat(talle)))) {
-        errores.push("El talle debe ser un valor válido mayor a 0 (puede ser numérico o texto como 'S').");
-      }
-      if (!temporada) {
-        errores.push("Debes seleccionar una temporada.");
-      }
-      if (!tipo) {
-        errores.push("Debes seleccionar un tipo.");
-      }
-
-      if (errores.length > 0) {
-        alert("Errores encontrados:\n- " + errores.join("\n- "));
-        return;
-      }
-
-      const producto = { id: editIndex === -1 ? generarId() : inventario[editIndex].id, nombre, cantidad: parseInt(cantidad), color, talle, tela, temporada, tipo };
-
-      if (editIndex === -1) {
-        if (inventario.length > 1) {
-          inventario.splice(inventario.length - 1, 0, producto);
-        } else {
-          inventario.push(producto);
-        }
-      } else {
-        inventario[editIndex] = producto;
-        editIndex = -1;
-      }
-
-      localStorage.setItem('inventario', JSON.stringify(inventario));
-      actualizarTabla();
-      limpiarFormulario();
-    }
-
-    function editarProducto(id) {
-      editIndex = inventario.findIndex(p => p.id === id);
-      const producto = inventario[editIndex];
-      document.getElementById('nombre').value = producto.nombre;
-      document.getElementById('cantidad').value = producto.cantidad;
-      document.getElementById('color').value = producto.color;
-      document.getElementById('talle').value = producto.talle;
-      document.getElementById('tela').value = producto.tela;
-      temporadaSeleccionada = producto.temporada;
-      tipoSeleccionado = producto.tipo;
-      document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+    function editarProducto(id){
+      editIndex=inventario.findIndex(p=>p.id===id); const p=inventario[editIndex];
+      document.getElementById('nombre').value=p.nombre;
+      document.getElementById('cantidad').value=p.cantidad;
+      document.getElementById('color').value=p.color;
+      document.getElementById('talle').value=p.talle;
+      document.getElementById('tela').value=p.tela;
+      temporadaSeleccionada=p.temporada; tipoSeleccionado=p.tipo;
+      document.querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected'));
       document.querySelector(`.option-btn[onclick="seleccionarTemporada('${temporadaSeleccionada}')"]`)?.classList.add('selected');
       document.querySelector(`.option-btn[onclick="seleccionarTipo('${tipoSeleccionado}')"]`)?.classList.add('selected');
       document.getElementById('nombre').focus();
     }
 
-    function eliminarProducto(id) {
-      if (confirm('¿Estás seguro de eliminar este producto?')) {
-        inventario = inventario.filter(p => p.id !== id);
+    function eliminarProducto(id){
+      if(confirm('¿Eliminar este producto?')){
+        inventario = inventario.filter(p=>p.id!==id);
         localStorage.setItem('inventario', JSON.stringify(inventario));
         actualizarTabla();
       }
     }
 
-    function actualizarTabla() {
-      const cuerpoTabla = document.getElementById('cuerpoTabla');
-      cuerpoTabla.innerHTML = '';
-      inventario.forEach(producto => {
-        const temporadaIcono = producto.temporada === 'Verano' ? '☀' : producto.temporada === 'Invierno' ? '❄' : '📅';
-        const tipoIcono = producto.tipo === 'Hombre' ? '👨' : producto.tipo === 'Mujer' ? '👩' : '🧒';
-        const fila = document.createElement('tr');
-        fila.setAttribute('draggable', 'true');
-        fila.setAttribute('data-id', producto.id);
-        fila.innerHTML = `
+    // NUEVO: Borrar todo el inventario con confirmación
+    function borrarTodoInventario(){
+      if(inventario.length===0){ alert("El inventario ya está vacío."); return; }
+      if(confirm("⚠️ Atención: vas a borrar TODO el inventario.\n\n¿Continuar?")){
+        inventario = [];
+        localStorage.setItem('inventario', JSON.stringify(inventario));
+        actualizarTabla();
+        alert("Inventario borrado.");
+      }
+    }
+
+    function actualizarTabla(){
+      const cuerpo=document.getElementById('cuerpoTabla');
+      cuerpo.innerHTML='';
+      inventario.forEach(p=>{
+        const temporadaIcono=p.temporada==='Verano'?'☀':p.temporada==='Invierno'?'❄':'📅';
+        const tipoIcono=p.tipo==='Hombre'?'👨':p.tipo==='Mujer'?'👩':'🧒';
+        const fila=document.createElement('tr');
+        fila.setAttribute('draggable','true');
+        fila.setAttribute('data-id',p.id);
+        fila.innerHTML=`
           <td class="drag-icon">☰</td>
-          <td>${producto.nombre}</td>
-          <td>${producto.cantidad}</td>
-          <td>${producto.color}</td>
-          <td>${producto.talle}</td>
-          <td>${producto.tela}</td>
-          <td class="icon-cell">${temporadaIcono} ${producto.temporada}</td>
-          <td class="icon-cell">${tipoIcono} ${producto.tipo}</td>
+          <td>${p.nombre}</td>
+          <td>${p.cantidad}</td>
+          <td>${p.color}</td>
+          <td>${p.talle}</td>
+          <td>${p.tela}</td>
+          <td class="icon-cell">${temporadaIcono} ${p.temporada}</td>
+          <td class="icon-cell">${tipoIcono} ${p.tipo}</td>
           <td class="actions">
-            <button onclick="editarProducto('${producto.id}')">Editar</button>
-            <button class="delete" onclick="eliminarProducto('${producto.id}')">Eliminar</button>
-          </td>
-        `;
-        // Agregar eventos de arrastrar y soltar
-        fila.addEventListener('dragstart', handleDragStart);
-        fila.addEventListener('dragover', handleDragOver);
-        fila.addEventListener('drop', handleDrop);
-        fila.addEventListener('dragend', handleDragEnd);
-        // Agregar evento de doble clic para editar, excluyendo ciertas columnas
-        fila.addEventListener('dblclick', (e) => {
-          if (!e.target.closest('.drag-icon') && !e.target.closest('.actions')) {
-            editarProducto(producto.id);
-          }
-        });
-        cuerpoTabla.appendChild(fila);
+            <button onclick="editarProducto('${p.id}')">Editar</button>
+            <button class="delete" onclick="eliminarProducto('${p.id}')">Eliminar</button>
+          </td>`;
+        fila.addEventListener('dragstart',handleDragStart);
+        fila.addEventListener('dragover',handleDragOver);
+        fila.addEventListener('drop',handleDrop);
+        fila.addEventListener('dragend',handleDragEnd);
+        fila.addEventListener('dblclick',(e)=>{ if(!e.target.closest('.drag-icon') && !e.target.closest('.actions')) editarProducto(p.id); });
+        cuerpo.appendChild(fila);
       });
       actualizarFiltroArticulos();
       filtrarTabla();
     }
 
-    function handleDragStart(e) {
-      draggedRow = e.target;
-      e.target.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', e.target.getAttribute('data-id'));
-    }
-
-    function handleDragOver(e) {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-    }
-
-    function handleDrop(e) {
-      e.preventDefault();
-      const droppedId = e.dataTransfer.getData('text/plain');
-      const targetId = e.target.closest('tr').getAttribute('data-id');
-      if (droppedId !== targetId) {
-        const draggedIndex = inventario.findIndex(p => p.id === droppedId);
-        const targetIndex = inventario.findIndex(p => p.id === targetId);
-        const [draggedProducto] = inventario.splice(draggedIndex, 1);
-        inventario.splice(targetIndex, 0, draggedProducto);
-        localStorage.setItem('inventario', JSON.stringify(inventario));
-        actualizarTabla();
-      }
-    }
-
-    function handleDragEnd(e) {
-      e.target.classList.remove('dragging');
-      draggedRow = null;
-    }
-
-    function actualizarFiltroArticulos() {
-      const filtroArticulo = document.getElementById('filtroArticulo');
-      const articulos = [...new Set(inventario.map(p => {
-        const primeraPalabra = p.nombre.split(' ')[0].toLowerCase();
-        return primeraPalabra.charAt(0).toUpperCase() + primeraPalabra.slice(1);
+    function actualizarFiltroArticulos(){
+      const filtro=document.getElementById('filtroArticulo');
+      const articulos=[...new Set(inventario.map(p=>{
+        const primera=p.nombre.split(' ')[0].toLowerCase();
+        return primera.charAt(0).toUpperCase()+primera.slice(1);
       }))];
-      filtroArticulo.innerHTML = '<option value="">Todos</option>';
-      articulos.sort().forEach(articulo => {
-        const option = document.createElement('option');
-        option.value = articulo.toLowerCase();
-        option.textContent = articulo;
-        filtroArticulo.appendChild(option);
+      filtro.innerHTML='<option value=\"\">Todos</option>';
+      articulos.sort().forEach(a=>{
+        const op=document.createElement('option');
+        op.value=a.toLowerCase();
+        op.textContent=a;
+        filtro.appendChild(op);
       });
     }
 
-    function filtrarTabla() {
-      const filtro = document.getElementById('filtroArticulo').value.toLowerCase();
-      const rows = document.querySelectorAll('#cuerpoTabla tr');
-      rows.forEach(row => {
-        const nombreCell = row.querySelector('td:nth-child(2)');
-        if (nombreCell) {
-          const primeraPalabra = nombreCell.textContent.split(' ')[0].toLowerCase();
-          if (!filtro || primeraPalabra === filtro) {
-            row.style.display = '';
-          } else {
-            row.style.display = 'none';
-          }
+    function filtrarTabla(){
+      const filtro=document.getElementById('filtroArticulo').value.toLowerCase();
+      document.querySelectorAll('#cuerpoTabla tr').forEach(row=>{
+        const nombreCell=row.querySelector('td:nth-child(2)');
+        if(nombreCell){
+          const primera=nombreCell.textContent.split(' ')[0].toLowerCase();
+          row.style.display = (!filtro || primera===filtro) ? '' : 'none';
         }
       });
     }
 
-    function importarCSV(file) {
-      if (!file) {
-        alert('No se seleccionó ningún archivo.');
-        return;
+    function handleDragStart(e){
+      draggedRow=e.target;
+      e.target.classList.add('dragging');
+      e.dataTransfer.effectAllowed='move';
+      e.dataTransfer.setData('text/plain', e.target.getAttribute('data-id'));
+    }
+    function handleDragOver(e){ e.preventDefault(); e.dataTransfer.dropEffect='move'; }
+    function handleDrop(e){
+      e.preventDefault();
+      const droppedId=e.dataTransfer.getData('text/plain');
+      const targetRow=e.target.closest('tr');
+      if(!targetRow) return;
+      const targetId=targetRow.getAttribute('data-id');
+      if(droppedId!==targetId){
+        const di=inventario.findIndex(p=>p.id===droppedId);
+        const ti=inventario.findIndex(p=>p.id===targetId);
+        const [dragged]=inventario.splice(di,1);
+        inventario.splice(ti,0,dragged);
+        localStorage.setItem('inventario', JSON.stringify(inventario));
+        actualizarTabla();
       }
+    }
+    function handleDragEnd(e){ e.target.classList.remove('dragging'); draggedRow=null; }
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const text = e.target.result;
-        console.log('Contenido del CSV:', text);
-        const lines = text.split('\n').filter(line => line.trim() !== '');
-        let importedCount = 0;
-
-        lines.forEach((line, index) => {
-          if (index === 0) return; // Ignorar encabezado
-          const separators = [',', '|'];
-          let parts = null;
-          for (let sep of separators) {
-            parts = line.split(sep).map(part => part.trim());
-            if (parts.length >= 7) break;
+    function importarCSV(file){
+      if(!file){ alert('No se seleccionó ningún archivo.'); return; }
+      const reader=new FileReader();
+      reader.onload=function(e){
+        const text=e.target.result;
+        const lines=text.split('\n').filter(line=>line.trim()!=='');
+        let importedCount=0;
+        lines.forEach((line,index)=>{
+          if(index===0) return; // encabezado
+          const separators=[',','|'];
+          let parts=null;
+          for(const sep of separators){
+            parts=line.split(sep).map(p=>p.trim());
+            if(parts.length>=7) break;
           }
-          if (!parts || parts.length < 7) {
-            console.log('Línea no válida:', line);
-            return;
-          }
+          if(!parts || parts.length<7) return;
 
-          const nombre = parts[0];
-          const cantidad = parseInt(parts[1]);
-          const color = parts[2];
-          const talle = parts[3];
-          const tela = parts[4];
-          const temporada = parts[5];
-          const tipo = parts[6];
+          const nombre=parts[0];
+          const cantidad=parseInt(parts[1]);
+          const color=parts[2];
+          const talle=parts[3];
+          const tela=parts[4];
+          const temporada=parts[5];
+          const tipo=parts[6];
 
-          let errores = [];
-          if (!nombre) errores.push(`Nombre vacío en línea ${index + 1}`);
-          if (isNaN(cantidad) || cantidad < 0) errores.push(`Cantidad no válida en línea ${index + 1}`);
-          if (!color) errores.push(`Color vacío en línea ${index + 1}`);
-          if (!talle || (parseFloat(talle) <= 0 && !isNaN(parseFloat(talle)))) errores.push(`Talle no válido en línea ${index + 1}`);
-          if (!tela) errores.push(`Tela vacía en línea ${index + 1}`);
-          if (!temporada) errores.push(`Temporada vacía en línea ${index + 1}`);
-          if (!tipo) errores.push(`Tipo vacío en línea ${index + 1}`);
+          let errores=[];
+          if(!nombre) errores.push(`Nombre vacío en línea ${index+1}`);
+          if(isNaN(cantidad) || cantidad<0) errores.push(`Cantidad no válida en línea ${index+1}`);
+          if(!color) errores.push(`Color vacío en línea ${index+1}`);
+          if(!talle || (parseFloat(talle)<=0 && !isNaN(parseFloat(talle)))) errores.push(`Talle no válido en línea ${index+1}`);
+          if(!tela) errores.push(`Tela vacía en línea ${index+1}`);
+          if(!temporada) errores.push(`Temporada vacía en línea ${index+1}`);
+          if(!tipo) errores.push(`Tipo vacío en línea ${index+1}`);
+          if(errores.length>0) return;
 
-          if (errores.length > 0) {
-            console.log('Errores en línea:', errores);
-            return;
-          }
-
-          const producto = { id: generarId(), nombre, cantidad, color, talle, tela, temporada, tipo };
-          if (inventario.length > 1) {
-            inventario.splice(inventario.length - 1, 0, producto);
-          } else {
-            inventario.push(producto);
-          }
+          const producto={ id: generarId(), nombre, cantidad, color, talle, tela, temporada, tipo };
+          inventario.push(producto);
           importedCount++;
         });
 
-        if (importedCount === 0) {
-          alert('No se encontraron datos válidos en el CSV. Asegúrate de que el formato sea: Nombre|Cantidad|Color|Talle|Tela|Temporada|Tipo (o con comas). Revisa la consola para más detalles.');
+        if(importedCount===0){
+          alert('No se encontraron datos válidos en el CSV. Formato: Nombre|Cantidad|Color|Talle|Tela|Temporada|Tipo');
           return;
         }
-
         localStorage.setItem('inventario', JSON.stringify(inventario));
         actualizarTabla();
-        alert(`Se importaron ${importedCount} productos del CSV. Revisa la tabla para editar si es necesario.`);
+        alert(`Se importaron ${importedCount} productos del CSV.`);
       };
-      reader.onerror = function() {
+      reader.onerror=function(){
         console.error('Error al leer el archivo:', reader.error);
         alert('Error al leer el archivo CSV. Revisa la consola para más detalles.');
       };
       reader.readAsText(file);
     }
 
-    function exportarPDFyCSV() {
-      if (inventario.length === 0) {
-        alert('El inventario está vacío. Agrega productos antes de exportar.');
-        return;
-      }
+    function exportarPDFyCSV(){
+      if(inventario.length===0){ alert('El inventario está vacío. Agregá productos antes de exportar.'); return; }
 
-      // Exportar a PDF
+      // PDF
       const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({
-        orientation: 'landscape'
-      });
-
+      const doc = new jsPDF({ orientation:'landscape' });
       doc.setFontSize(18);
       doc.text('Inventario de Ropa', 10, 20);
-
-      const tableData = inventario.map(producto => [
-        producto.nombre,
-        producto.cantidad,
-        producto.color,
-        producto.talle,
-        producto.tela,
-        producto.temporada,
-        producto.tipo
-      ]);
-
+      const tableData = inventario.map(p=>[p.nombre,p.cantidad,p.color,p.talle,p.tela,p.temporada,p.tipo]);
       doc.autoTable({
-        head: [['Nombre', 'Cantidad', 'Color', 'Talle', 'Tela', 'Temporada', 'Tipo']],
+        head: [['Nombre','Cantidad','Color','Talle','Tela','Temporada','Tipo']],
         body: tableData,
         startY: 30,
         theme: 'striped',
         styles: { fontSize: 12, cellPadding: 5 },
-        headStyles: { fillColor: [52, 152, 219], textColor: [255, 255, 255], fontSize: 14 }
+        headStyles: { fillColor: [52,152,219], textColor: [255,255,255], fontSize: 14 }
       });
-
       doc.save('inventario.pdf');
 
-      // Exportar a CSV
-      let csvContent = 'Nombre|Cantidad|Color|Talle|Tela|Temporada|Tipo\n';
-      inventario.forEach(producto => {
-        csvContent += `${producto.nombre}|${producto.cantidad}|${producto.color}|${producto.talle}|${producto.tela}|${producto.temporada}|${producto.tipo}\n`;
+      // CSV
+      let csv='Nombre|Cantidad|Color|Talle|Tela|Temporada|Tipo\n';
+      inventario.forEach(p=>{
+        csv+=`${p.nombre}|${p.cantidad}|${p.color}|${p.talle}|${p.tela}|${p.temporada}|${p.tipo}\n`;
       });
-
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      if (link.download !== undefined) {
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', 'inventario.csv');
-        link.style.visibility = 'hidden';
+      const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+      const link=document.createElement('a');
+      if(link.download!==undefined){
+        const url=URL.createObjectURL(blob);
+        link.setAttribute('href',url);
+        link.setAttribute('download','inventario.csv');
+        link.style.visibility='hidden';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
       }
     }
 
-    function limpiarFormulario() {
-      document.getElementById('nombre').value = '';
-      document.getElementById('cantidad').value = '';
-      document.getElementById('color').value = '';
-      document.getElementById('talle').value = '';
-      document.getElementById('tela').selectedIndex = 0;
-      temporadaSeleccionada = '';
-      tipoSeleccionado = '';
-      document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+    function limpiarFormulario(){
+      document.getElementById('nombre').value='';
+      document.getElementById('cantidad').value='';
+      document.getElementById('color').value='';
+      document.getElementById('talle').value='';
+      document.getElementById('tela').selectedIndex=0;
+      temporadaSeleccionada=''; tipoSeleccionado='';
+      document.querySelectorAll('.option-btn').forEach(btn=>btn.classList.remove('selected'));
     }
 
     actualizarTabla();
