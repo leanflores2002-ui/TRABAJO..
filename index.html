@@ -22,7 +22,7 @@
       margin-bottom: 20px;
     }
     .container {
-      max-width: 100%;
+      max-width: 1200px;
       margin: 0 auto;
       background: #ffffff;
       padding: 20px;
@@ -92,22 +92,36 @@
     button.delete-all { background-color: #e74c3c; }
     button.delete-all:hover { background-color: #c0392b; }
     #csv-upload { margin-top: 10px; display: none; }
+    .category-section { margin-top: 20px; }
+    .category-header {
+      background-color: #3498db;
+      color: white;
+      padding: 10px;
+      font-size: 20px;
+      cursor: pointer;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .category-header:hover { background-color: #2980b9; }
+    .category-content { display: none; }
+    .category-content.show { display: block; }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
+      margin-top: 10px;
       font-size: 16px;
     }
     th, td { border: 1px solid #dfe6e9; padding: 12px; text-align: left; }
     th { background-color: #3498db; color: white; font-size: 18px; }
     td { background-color: #f9fbfc; }
-    tr { cursor: move; }
-    tr.dragging { opacity: 0.5; background-color: #e0e0e0; }
-    .drag-icon { font-size: 20px; color: #34495e; cursor: move; text-align: center; width: 40px; }
-    .drag-icon:hover { color: #3498db; }
-    .icon-cell { font-size: 20px; text-align: center; }
+    .subtotal-row { font-weight: bold; background-color: #ecf0f1; }
     .actions button {
-      width: auto; padding: 8px 16px; font-size: 16px; margin-right: 10px;
+      width: auto;
+      padding: 8px 16px;
+      font-size: 16px;
+      margin-right: 10px;
     }
     .actions button.delete { background-color: #e74c3c; }
     .actions button.delete:hover { background-color: #c0392b; }
@@ -121,7 +135,6 @@
       button { font-size: 18px; padding: 12px; }
       th, td { font-size: 14px; padding: 10px; }
       .actions button { font-size: 14px; padding: 6px 12px; }
-      .drag-icon, .icon-cell { font-size: 16px; width: 30px; }
       .option-group { flex-direction: column; }
     }
   </style>
@@ -198,78 +211,95 @@
         <option value="">Todos</option>
       </select>
     </div>
-    <table id="tablaInventario">
-      <thead>
-        <tr>
-          <th style="width:40px;">Mover</th>
-          <th>Nombre</th><th>Cantidad</th><th>Color</th><th>Talle</th>
-          <th>Tela</th><th>Temporada</th><th>Tipo</th><th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody id="cuerpoTabla"></tbody>
-    </table>
+
+    <div id="inventarioContainer"></div>
   </div>
 
   <script>
     let inventario = JSON.parse(localStorage.getItem('inventario')) || [];
-    let editIndex = -1, temporadaSeleccionada = '', tipoSeleccionado = '', draggedRow = null;
+    let editIndex = -1, temporadaSeleccionada = '', tipoSeleccionado = '';
 
-    function generarId(){ return '_' + Math.random().toString(36).substr(2, 9); }
-    function seleccionarTemporada(t){ temporadaSeleccionada=t;document.querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected'));event.target.classList.add('selected'); }
-    function seleccionarTipo(t){ tipoSeleccionado=t;document.querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected'));event.target.classList.add('selected'); }
-
-    function agregarOEditarProducto(){
-      const nombre=document.getElementById('nombre').value.trim();
-      const cantidad=document.getElementById('cantidad').value;
-      const color=document.getElementById('color').value.trim();
-      const talle=document.getElementById('talle').value.trim();
-      const tela=document.getElementById('tela').value;
-      const temporada=temporadaSeleccionada, tipo=tipoSeleccionado;
-
-      let errores=[];
-      if(!nombre) errores.push("El nombre es obligatorio.");
-      if(!cantidad||isNaN(cantidad)||parseInt(cantidad)<0) errores.push("Cantidad inválida.");
-      if(!color) errores.push("El color es obligatorio.");
-      if(!talle||(parseFloat(talle)<=0&&!isNaN(parseFloat(talle)))) errores.push("Talle inválido.");
-      if(!temporada) errores.push("Seleccioná temporada.");
-      if(!tipo) errores.push("Seleccioná tipo.");
-
-      if(errores.length>0){ alert("Errores:\n- "+errores.join("\n- "));return; }
-
-      const producto={ id: editIndex===-1?generarId():inventario[editIndex].id, nombre, cantidad:parseInt(cantidad), color, talle, tela, temporada, tipo };
-
-      if(editIndex===-1){ inventario.push(producto);} else { inventario[editIndex]=producto; editIndex=-1; }
-
-      localStorage.setItem('inventario',JSON.stringify(inventario));
-      actualizarTabla(); limpiarFormulario();
+    function generarId() {
+      return '_' + Math.random().toString(36).substr(2, 9);
     }
 
-    function editarProducto(id){
-      editIndex=inventario.findIndex(p=>p.id===id); const p=inventario[editIndex];
-      document.getElementById('nombre').value=p.nombre;
-      document.getElementById('cantidad').value=p.cantidad;
-      document.getElementById('color').value=p.color;
-      document.getElementById('talle').value=p.talle;
-      document.getElementById('tela').value=p.tela;
-      temporadaSeleccionada=p.temporada; tipoSeleccionado=p.tipo;
-      document.querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected'));
+    function seleccionarTemporada(t) {
+      temporadaSeleccionada = t;
+      document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+      event.target.classList.add('selected');
+    }
+
+    function seleccionarTipo(t) {
+      tipoSeleccionado = t;
+      document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+      event.target.classList.add('selected');
+    }
+
+    function agregarOEditarProducto() {
+      const nombre = document.getElementById('nombre').value.trim();
+      const cantidad = document.getElementById('cantidad').value;
+      const color = document.getElementById('color').value.trim();
+      const talle = document.getElementById('talle').value.trim();
+      const tela = document.getElementById('tela').value;
+      const temporada = temporadaSeleccionada, tipo = tipoSeleccionado;
+
+      let errores = [];
+      if (!nombre) errores.push("El nombre es obligatorio.");
+      if (!cantidad || isNaN(cantidad) || parseInt(cantidad) < 0) errores.push("Cantidad inválida.");
+      if (!color) errores.push("El color es obligatorio.");
+      if (!talle || (parseFloat(talle) <= 0 && !isNaN(parseFloat(talle)))) errores.push("Talle inválido.");
+      if (!temporada) errores.push("Seleccioná temporada.");
+      if (!tipo) errores.push("Seleccioná tipo.");
+
+      if (errores.length > 0) {
+        alert("Errores:\n- " + errores.join("\n- "));
+        return;
+      }
+
+      const producto = { id: editIndex === -1 ? generarId() : inventario[editIndex].id, nombre, cantidad: parseInt(cantidad), color, talle, tela, temporada, tipo };
+
+      if (editIndex === -1) {
+        inventario.push(producto);
+      } else {
+        inventario[editIndex] = producto;
+        editIndex = -1;
+      }
+
+      localStorage.setItem('inventario', JSON.stringify(inventario));
+      actualizarTabla();
+      limpiarFormulario();
+    }
+
+    function editarProducto(id) {
+      editIndex = inventario.findIndex(p => p.id === id);
+      const p = inventario[editIndex];
+      document.getElementById('nombre').value = p.nombre;
+      document.getElementById('cantidad').value = p.cantidad;
+      document.getElementById('color').value = p.color;
+      document.getElementById('talle').value = p.talle;
+      document.getElementById('tela').value = p.tela;
+      temporadaSeleccionada = p.temporada;
+      tipoSeleccionado = p.tipo;
+      document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
       document.querySelector(`.option-btn[onclick="seleccionarTemporada('${temporadaSeleccionada}')"]`)?.classList.add('selected');
       document.querySelector(`.option-btn[onclick="seleccionarTipo('${tipoSeleccionado}')"]`)?.classList.add('selected');
       document.getElementById('nombre').focus();
     }
 
-    function eliminarProducto(id){
-      if(confirm('¿Eliminar este producto?')){
-        inventario = inventario.filter(p=>p.id!==id);
+    function eliminarProducto(id) {
+      if (confirm('¿Eliminar este producto?')) {
+        inventario = inventario.filter(p => p.id !== id);
         localStorage.setItem('inventario', JSON.stringify(inventario));
         actualizarTabla();
       }
     }
 
-    // NUEVO: Borrar todo el inventario con confirmación
-    function borrarTodoInventario(){
-      if(inventario.length===0){ alert("El inventario ya está vacío."); return; }
-      if(confirm("⚠️ Atención: vas a borrar TODO el inventario.\n\n¿Continuar?")){
+    function borrarTodoInventario() {
+      if (inventario.length === 0) {
+        alert("El inventario ya está vacío.");
+        return;
+      }
+      if (confirm("⚠️ Atención: vas a borrar TODO el inventario.\n\n¿Continuar?")) {
         inventario = [];
         localStorage.setItem('inventario', JSON.stringify(inventario));
         actualizarTabla();
@@ -277,130 +307,134 @@
       }
     }
 
-    function actualizarTabla(){
-      const cuerpo=document.getElementById('cuerpoTabla');
-      cuerpo.innerHTML='';
-      inventario.forEach(p=>{
-        const temporadaIcono=p.temporada==='Verano'?'☀':p.temporada==='Invierno'?'❄':'📅';
-        const tipoIcono=p.tipo==='Hombre'?'👨':p.tipo==='Mujer'?'👩':'🧒';
-        const fila=document.createElement('tr');
-        fila.setAttribute('draggable','true');
-        fila.setAttribute('data-id',p.id);
-        fila.innerHTML=`
-          <td class="drag-icon">☰</td>
-          <td>${p.nombre}</td>
-          <td>${p.cantidad}</td>
-          <td>${p.color}</td>
-          <td>${p.talle}</td>
-          <td>${p.tela}</td>
-          <td class="icon-cell">${temporadaIcono} ${p.temporada}</td>
-          <td class="icon-cell">${tipoIcono} ${p.tipo}</td>
-          <td class="actions">
-            <button onclick="editarProducto('${p.id}')">Editar</button>
-            <button class="delete" onclick="eliminarProducto('${p.id}')">Eliminar</button>
-          </td>`;
-        fila.addEventListener('dragstart',handleDragStart);
-        fila.addEventListener('dragover',handleDragOver);
-        fila.addEventListener('drop',handleDrop);
-        fila.addEventListener('dragend',handleDragEnd);
-        fila.addEventListener('dblclick',(e)=>{ if(!e.target.closest('.drag-icon') && !e.target.closest('.actions')) editarProducto(p.id); });
-        cuerpo.appendChild(fila);
+    function actualizarTabla() {
+      const container = document.getElementById('inventarioContainer');
+      container.innerHTML = '';
+      const tipos = ['Hombre', 'Mujer', 'Niño'];
+      const filtro = document.getElementById('filtroArticulo').value.toLowerCase();
+
+      tipos.forEach(tipo => {
+        const productosTipo = inventario.filter(p => p.tipo === tipo);
+        if (productosTipo.length === 0) return;
+
+        const articulos = [...new Set(productosTipo.map(p => p.nombre.split(' ')[0].toLowerCase()))];
+        const section = document.createElement('div');
+        section.className = 'category-section';
+        section.innerHTML = `
+          <div class="category-header" onclick="toggleCategory(this)">${tipo} <span>▼</span></div>
+          <div class="category-content show">
+            ${articulos.map(art => {
+              const productos = productosTipo.filter(p => p.nombre.toLowerCase().startsWith(art));
+              if (filtro && art !== filtro) return '';
+              const total = productos.reduce((sum, p) => sum + p.cantidad, 0);
+              return `
+                <h3>${art.charAt(0).toUpperCase() + art.slice(1)}</h3>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Nombre</th><th>Cantidad</th><th>Color</th><th>Talle</th><th>Tela</th><th>Temporada</th><th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${productos.map(p => `
+                      <tr data-id="${p.id}">
+                        <td>${p.nombre}</td>
+                        <td>${p.cantidad}</td>
+                        <td>${p.color}</td>
+                        <td>${p.talle}</td>
+                        <td>${p.tela}</td>
+                        <td class="icon-cell">${p.temporada === 'Verano' ? '☀' : p.temporada === 'Invierno' ? '❄' : '📅'} ${p.temporada}</td>
+                        <td class="actions">
+                          <button onclick="editarProducto('${p.id}')">Editar</button>
+                          <button class="delete" onclick="eliminarProducto('${p.id}')">Eliminar</button>
+                        </td>
+                      </tr>
+                    `).join('')}
+                    <tr class="subtotal-row">
+                      <td colspan="2">Total ${art.charAt(0).toUpperCase() + art.slice(1)}</td>
+                      <td colspan="5">${total}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              `;
+            }).join('')}
+          </div>
+        `;
+        container.appendChild(section);
       });
+
       actualizarFiltroArticulos();
-      filtrarTabla();
     }
 
-    function actualizarFiltroArticulos(){
-      const filtro=document.getElementById('filtroArticulo');
-      const articulos=[...new Set(inventario.map(p=>{
-        const primera=p.nombre.split(' ')[0].toLowerCase();
-        return primera.charAt(0).toUpperCase()+primera.slice(1);
+    function toggleCategory(header) {
+      const content = header.nextElementSibling;
+      content.classList.toggle('show');
+      header.querySelector('span').textContent = content.classList.contains('show') ? '▼' : '▶';
+    }
+
+    function actualizarFiltroArticulos() {
+      const filtro = document.getElementById('filtroArticulo');
+      const articulos = [...new Set(inventario.map(p => {
+        const primera = p.nombre.split(' ')[0].toLowerCase();
+        return primera.charAt(0).toUpperCase() + primera.slice(1);
       }))];
-      filtro.innerHTML='<option value=\"\">Todos</option>';
-      articulos.sort().forEach(a=>{
-        const op=document.createElement('option');
-        op.value=a.toLowerCase();
-        op.textContent=a;
+      filtro.innerHTML = '<option value="">Todos</option>';
+      articulos.sort().forEach(a => {
+        const op = document.createElement('option');
+        op.value = a.toLowerCase();
+        op.textContent = a;
         filtro.appendChild(op);
       });
     }
 
-    function filtrarTabla(){
-      const filtro=document.getElementById('filtroArticulo').value.toLowerCase();
-      document.querySelectorAll('#cuerpoTabla tr').forEach(row=>{
-        const nombreCell=row.querySelector('td:nth-child(2)');
-        if(nombreCell){
-          const primera=nombreCell.textContent.split(' ')[0].toLowerCase();
-          row.style.display = (!filtro || primera===filtro) ? '' : 'none';
-        }
-      });
+    function filtrarTabla() {
+      actualizarTabla();
     }
 
-    function handleDragStart(e){
-      draggedRow=e.target;
-      e.target.classList.add('dragging');
-      e.dataTransfer.effectAllowed='move';
-      e.dataTransfer.setData('text/plain', e.target.getAttribute('data-id'));
-    }
-    function handleDragOver(e){ e.preventDefault(); e.dataTransfer.dropEffect='move'; }
-    function handleDrop(e){
-      e.preventDefault();
-      const droppedId=e.dataTransfer.getData('text/plain');
-      const targetRow=e.target.closest('tr');
-      if(!targetRow) return;
-      const targetId=targetRow.getAttribute('data-id');
-      if(droppedId!==targetId){
-        const di=inventario.findIndex(p=>p.id===droppedId);
-        const ti=inventario.findIndex(p=>p.id===targetId);
-        const [dragged]=inventario.splice(di,1);
-        inventario.splice(ti,0,dragged);
-        localStorage.setItem('inventario', JSON.stringify(inventario));
-        actualizarTabla();
+    function importarCSV(file) {
+      if (!file) {
+        alert('No se seleccionó ningún archivo.');
+        return;
       }
-    }
-    function handleDragEnd(e){ e.target.classList.remove('dragging'); draggedRow=null; }
-
-    function importarCSV(file){
-      if(!file){ alert('No se seleccionó ningún archivo.'); return; }
-      const reader=new FileReader();
-      reader.onload=function(e){
-        const text=e.target.result;
-        const lines=text.split('\n').filter(line=>line.trim()!=='');
-        let importedCount=0;
-        lines.forEach((line,index)=>{
-          if(index===0) return; // encabezado
-          const separators=[',','|'];
-          let parts=null;
-          for(const sep of separators){
-            parts=line.split(sep).map(p=>p.trim());
-            if(parts.length>=7) break;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const text = e.target.result;
+        const lines = text.split('\n').filter(line => line.trim() !== '');
+        let importedCount = 0;
+        lines.forEach((line, index) => {
+          if (index === 0) return; // encabezado
+          const separators = [',', '|'];
+          let parts = null;
+          for (const sep of separators) {
+            parts = line.split(sep).map(p => p.trim());
+            if (parts.length >= 7) break;
           }
-          if(!parts || parts.length<7) return;
+          if (!parts || parts.length < 7) return;
 
-          const nombre=parts[0];
-          const cantidad=parseInt(parts[1]);
-          const color=parts[2];
-          const talle=parts[3];
-          const tela=parts[4];
-          const temporada=parts[5];
-          const tipo=parts[6];
+          const nombre = parts[0];
+          const cantidad = parseInt(parts[1]);
+          const color = parts[2];
+          const talle = parts[3];
+          const tela = parts[4];
+          const temporada = parts[5];
+          const tipo = parts[6];
 
-          let errores=[];
-          if(!nombre) errores.push(`Nombre vacío en línea ${index+1}`);
-          if(isNaN(cantidad) || cantidad<0) errores.push(`Cantidad no válida en línea ${index+1}`);
-          if(!color) errores.push(`Color vacío en línea ${index+1}`);
-          if(!talle || (parseFloat(talle)<=0 && !isNaN(parseFloat(talle)))) errores.push(`Talle no válido en línea ${index+1}`);
-          if(!tela) errores.push(`Tela vacía en línea ${index+1}`);
-          if(!temporada) errores.push(`Temporada vacía en línea ${index+1}`);
-          if(!tipo) errores.push(`Tipo vacío en línea ${index+1}`);
-          if(errores.length>0) return;
+          let errores = [];
+          if (!nombre) errores.push(`Nombre vacío en línea ${index + 1}`);
+          if (isNaN(cantidad) || cantidad < 0) errores.push(`Cantidad no válida en línea ${index + 1}`);
+          if (!color) errores.push(`Color vacío en línea ${index + 1}`);
+          if (!talle || (parseFloat(talle) <= 0 && !isNaN(parseFloat(talle)))) errores.push(`Talle no válido en línea ${index + 1}`);
+          if (!tela) errores.push(`Tela vacía en línea ${index + 1}`);
+          if (!temporada) errores.push(`Temporada vacía en línea ${index + 1}`);
+          if (!tipo) errores.push(`Tipo vacío en línea ${index + 1}`);
+          if (errores.length > 0) return;
 
-          const producto={ id: generarId(), nombre, cantidad, color, talle, tela, temporada, tipo };
+          const producto = { id: generarId(), nombre, cantidad, color, talle, tela, temporada, tipo };
           inventario.push(producto);
           importedCount++;
         });
 
-        if(importedCount===0){
+        if (importedCount === 0) {
           alert('No se encontraron datos válidos en el CSV. Formato: Nombre|Cantidad|Color|Talle|Tela|Temporada|Tipo');
           return;
         }
@@ -408,58 +442,81 @@
         actualizarTabla();
         alert(`Se importaron ${importedCount} productos del CSV.`);
       };
-      reader.onerror=function(){
+      reader.onerror = function () {
         console.error('Error al leer el archivo:', reader.error);
         alert('Error al leer el archivo CSV. Revisa la consola para más detalles.');
       };
       reader.readAsText(file);
     }
 
-    function exportarPDFyCSV(){
-      if(inventario.length===0){ alert('El inventario está vacío. Agregá productos antes de exportar.'); return; }
+    function exportarPDFyCSV() {
+      if (inventario.length === 0) {
+        alert('El inventario está vacío. Agregá productos antes de exportar.');
+        return;
+      }
 
       // PDF
       const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ orientation:'landscape' });
+      const doc = new jsPDF({ orientation: 'landscape' });
       doc.setFontSize(18);
       doc.text('Inventario de Ropa', 10, 20);
-      const tableData = inventario.map(p=>[p.nombre,p.cantidad,p.color,p.talle,p.tela,p.temporada,p.tipo]);
-      doc.autoTable({
-        head: [['Nombre','Cantidad','Color','Talle','Tela','Temporada','Tipo']],
-        body: tableData,
-        startY: 30,
-        theme: 'striped',
-        styles: { fontSize: 12, cellPadding: 5 },
-        headStyles: { fillColor: [52,152,219], textColor: [255,255,255], fontSize: 14 }
+      const tipos = ['Hombre', 'Mujer', 'Niño'];
+      let startY = 30;
+
+      tipos.forEach(tipo => {
+        const productosTipo = inventario.filter(p => p.tipo === tipo);
+        if (productosTipo.length === 0) return;
+
+        doc.setFontSize(14);
+        doc.text(tipo, 10, startY);
+        startY += 10;
+
+        const articulos = [...new Set(productosTipo.map(p => p.nombre.split(' ')[0].toLowerCase()))];
+        articulos.forEach(art => {
+          const productos = productosTipo.filter(p => p.nombre.toLowerCase().startsWith(art));
+          const total = productos.reduce((sum, p) => sum + p.cantidad, 0);
+          const tableData = productos.map(p => [p.nombre, p.cantidad, p.color, p.talle, p.tela, p.temporada]);
+          tableData.push(['Total ' + art.charAt(0).toUpperCase() + art.slice(1), total, '', '', '', '']);
+          doc.autoTable({
+            head: [['Nombre', 'Cantidad', 'Color', 'Talle', 'Tela', 'Temporada']],
+            body: tableData,
+            startY: startY,
+            theme: 'striped',
+            styles: { fontSize: 12, cellPadding: 5 },
+            headStyles: { fillColor: [52, 152, 219], textColor: [255, 255, 255], fontSize: 14 }
+          });
+          startY = doc.lastAutoTable.finalY + 10;
+        });
       });
       doc.save('inventario.pdf');
 
       // CSV
-      let csv='Nombre|Cantidad|Color|Talle|Tela|Temporada|Tipo\n';
-      inventario.forEach(p=>{
-        csv+=`${p.nombre}|${p.cantidad}|${p.color}|${p.talle}|${p.tela}|${p.temporada}|${p.tipo}\n`;
+      let csv = 'Nombre|Cantidad|Color|Talle|Tela|Temporada|Tipo\n';
+      inventario.forEach(p => {
+        csv += `${p.nombre}|${p.cantidad}|${p.color}|${p.talle}|${p.tela}|${p.temporada}|${p.tipo}\n`;
       });
-      const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
-      const link=document.createElement('a');
-      if(link.download!==undefined){
-        const url=URL.createObjectURL(blob);
-        link.setAttribute('href',url);
-        link.setAttribute('download','inventario.csv');
-        link.style.visibility='hidden';
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'inventario.csv');
+        link.style.visibility = 'hidden';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
       }
     }
 
-    function limpiarFormulario(){
-      document.getElementById('nombre').value='';
-      document.getElementById('cantidad').value='';
-      document.getElementById('color').value='';
-      document.getElementById('talle').value='';
-      document.getElementById('tela').selectedIndex=0;
-      temporadaSeleccionada=''; tipoSeleccionado='';
-      document.querySelectorAll('.option-btn').forEach(btn=>btn.classList.remove('selected'));
+    function limpiarFormulario() {
+      document.getElementById('nombre').value = '';
+      document.getElementById('cantidad').value = '';
+      document.getElementById('color').value = '';
+      document.getElementById('talle').value = '';
+      document.getElementById('tela').selectedIndex = 0;
+      temporadaSeleccionada = '';
+      tipoSeleccionado = '';
+      document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
     }
 
     actualizarTabla();
